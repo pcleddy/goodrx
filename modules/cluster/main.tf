@@ -8,6 +8,7 @@ resource "aws_launch_configuration" "goodrx_launch_configuration" {
   security_groups = [aws_security_group.goodrx_instance_security_group.id]
   user_data       = data.template_file.user_data.rendered
   #key_name        = "2020-02-03"
+  associate_public_ip_address = false
 
   lifecycle {
     create_before_destroy = true
@@ -45,8 +46,19 @@ resource "aws_security_group_rule" "allow_server_http_inbound" {
   type              = "ingress"
   security_group_id = aws_security_group.goodrx_instance_security_group.id
 
-  from_port   = var.server_port
-  to_port     = var.server_port
+  from_port                = var.server_port
+  to_port                  = var.server_port
+  protocol                 = local.tcp_protocol
+  source_security_group_id = aws_security_group.goodrx_alb_security_group.id
+  #cidr_blocks              = local.all_ips
+}
+
+resource "aws_security_group_rule" "allow_server_http_outbound" {
+  type              = "egress"
+  security_group_id = aws_security_group.goodrx_instance_security_group.id
+
+  from_port   = 0
+  to_port     = 65535
   protocol    = local.tcp_protocol
   cidr_blocks = local.all_ips
 }
