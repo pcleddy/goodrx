@@ -52,10 +52,10 @@ app.listen(port);
 console.log('Magic happens at http://localhost:' + port);
 
 function compare_build_date( a, b ) {
-  if ( a.build_date < b.build_date ){
+  if ( a.build_date > b.build_date ){
     return -1;
   }
-  if ( a.build_date > b.build_date ){
+  if ( a.build_date < b.build_date ){
     return 1;
   }
   return 0;
